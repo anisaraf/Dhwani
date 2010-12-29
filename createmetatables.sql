@@ -3,75 +3,94 @@ USE `dhwani`;
 SET FOREIGN_KEY_CHECKS=0;
 
 /* ID TABLES */
-Drop Table if EXISTS `mi_Lyricist`;
-CREATE TABLE `mi_Lyricist` (
+Drop Table if EXISTS `mi_Lyricists`;
+CREATE TABLE `mi_Lyricists` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
   `Name` varchar(50) NOT NULL,
-  `GoogleLink` varchar(75) NOT NULL,
+  `GoogleLink` varchar(200) NOT NULL,
   PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-Drop Table if EXISTS `mi_Actor`;
-CREATE TABLE `mi_Actor` (
+Drop Table if EXISTS `mi_Actors`;
+CREATE TABLE `mi_Actors` (
 `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
 `Name` varchar(50) NOT NULL,
-`GoogleLink` varchar(75) NOT NULL,	
+`GoogleLink` varchar(200) NOT NULL,	
 PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-Drop Table if EXISTS `mi_Composer`;
-CREATE TABLE `mi_Composer` (
+Drop Table if EXISTS `mi_Composers`;
+CREATE TABLE `mi_Composers` (
 `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
 `Name` varchar(50) NOT NULL,
-`GoogleLink` varchar(75) NOT NULL,
+`GoogleLink` varchar(200) NOT NULL,
 PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-Drop Table if EXISTS `mi_Singer`;
-CREATE TABLE `mi_Singer` (
+Drop Table if EXISTS `mi_Singers`;
+CREATE TABLE `mi_Singers` (
 `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
 `Name` varchar(50) NOT NULL,
-`GoogleLink` varchar(75) NOT NULL,
+`GoogleLink` varchar(200) NOT NULL,
+PRIMARY KEY (`Id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+Drop Table if EXISTS `mi_Directors`;
+CREATE TABLE `mi_Directors` (
+`Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
+`Name` varchar(50) NOT NULL,
+`GoogleLink` varchar(200) NOT NULL,
 PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 Drop Table if EXISTS `mi_AlbumArt`;
 CREATE TABLE `mi_AlbumArt` (
 `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
-`URL` varchar(75) NOT NULL,
+`GoogleLink` varchar(200) NOT NULL,
 PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-Drop Table if EXISTS `mi_Label`;
 Drop Table if EXISTS `mi_Album`;
 CREATE TABLE `mi_Album` (
 `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
-`Name` varchar(50) NOT NULL,
-`GoogleLink` varchar(75) NOT NULL,
-`Label` varchar(25) NOT NULL,
+`Title` varchar(50) NOT NULL,
+`GoogleLink` varchar(200) NOT NULL,
+`Label` varchar(25) NULL,
 `Released` YEAR NULL,
 PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-Drop Table if EXISTS `mi_Song`;
-CREATE TABLE `mi_Song` (
+Drop Table if EXISTS `mi_Songs`;
+CREATE TABLE `mi_Songs` (
 `Id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'UniqueId to identify Albul',
 `Name` varchar(50) NOT NULL,
-`Duration` TIME NOT NULL,
+`Duration` TIME NULL,
+`GoogleLink` varchar(200) NOT NULL,
 PRIMARY KEY (`Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*END ID TABLES */
 
 
-Drop Table if EXISTS `mla_Actor`;
-CREATE TABLE `mla_Actor` (
+Drop Table if EXISTS `mla_Actors`;
+CREATE TABLE `mla_Actors` (
 `AlbumId` int(10) unsigned NOT NULL,
-`ActorId` int(10) unsigned NOT NULL,
-PRIMARY KEY (`AlbumId`,`ActorId`),
-KEY `FK_mla_Actor` (`ActorId`),
-CONSTRAINT `FK_mla_Actor` FOREIGN KEY (`ActorId`) REFERENCES `mi_Actor` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
-CONSTRAINT `FK_mla_ActorAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
+`ActorsId` int(10) unsigned NOT NULL,
+PRIMARY KEY (`AlbumId`,`ActorsId`),
+KEY `FK_mla_Actors` (`ActorsId`),
+CONSTRAINT `FK_mla_Actors` FOREIGN KEY (`ActorsId`) REFERENCES `mi_Actors` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `FK_mla_ActorsAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+Drop Table if EXISTS `mla_Directors`;
+CREATE TABLE `mla_Directors` (
+`AlbumId` int(10) unsigned NOT NULL,
+`DirectorsId` int(10) unsigned NOT NULL,
+PRIMARY KEY (`AlbumId`,`DirectorsId`),
+KEY `FK_mla_Directors` (`DirectorsId`),
+CONSTRAINT `FK_mla_Directors` FOREIGN KEY (`DirectorsId`) REFERENCES `mi_Directors` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `FK_mla_DirectorsAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 Drop Table if EXISTS `mla_AlbumArt`;
@@ -85,50 +104,50 @@ CONSTRAINT `FK_mla_AlbumArtAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-Drop Table if EXISTS `mla_Composer`;
-CREATE TABLE `mla_Composer` (
+Drop Table if EXISTS `mla_Composers`;
+CREATE TABLE `mla_Composers` (
 `AlbumId` int(10) unsigned NOT NULL,
-`ComposerId` int(10) unsigned NOT NULL,
-PRIMARY KEY (`AlbumId`,`ComposerId`),
-KEY `FK_mla_Composer` (`ComposerId`),
-CONSTRAINT `FK_mla_Composer` FOREIGN KEY (`ComposerId`) REFERENCES `mi_Composer` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
-CONSTRAINT `FK_mla_ComposerAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
+`ComposersId` int(10) unsigned NOT NULL,
+PRIMARY KEY (`AlbumId`,`ComposersId`),
+KEY `FK_mla_Composers` (`ComposersId`),
+CONSTRAINT `FK_mla_Composers` FOREIGN KEY (`ComposersId`) REFERENCES `mi_Composers` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `FK_mla_ComposersAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
 Drop Table if EXISTS `mla_Label`;
 
 
-Drop Table if EXISTS `mla_Lyricist`;
-CREATE TABLE `mla_Lyricist` (
+Drop Table if EXISTS `mla_Lyricists`;
+CREATE TABLE `mla_Lyricists` (
 `AlbumId` int(10) unsigned NOT NULL,
-`LyricistId` int(10) unsigned NOT NULL,
-PRIMARY KEY (`AlbumId`,`LyricistId`),
-KEY `FK_mla_Lyricist` (`LyricistId`),
-CONSTRAINT `FK_mla_Lyricist` FOREIGN KEY (`LyricistId`) REFERENCES `mi_Lyricist` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
-CONSTRAINT `FK_mla_LyricistAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
+`LyricistsId` int(10) unsigned NOT NULL,
+PRIMARY KEY (`AlbumId`,`LyricistsId`),
+KEY `FK_mla_Lyricists` (`LyricistsId`),
+CONSTRAINT `FK_mla_Lyricists` FOREIGN KEY (`LyricistsId`) REFERENCES `mi_Lyricists` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `FK_mla_LyricistsAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-Drop Table if EXISTS `mla_Singer`;
-CREATE TABLE `mla_Singer` (
+Drop Table if EXISTS `mla_Singers`;
+CREATE TABLE `mla_Singers` (
 `AlbumId` int(10) unsigned NOT NULL,
-`SingerId` int(10) unsigned NOT NULL,
-PRIMARY KEY (`AlbumId`,`SingerId`),
-KEY `FK_mla_Singer` (`SingerId`),
-CONSTRAINT `FK_mla_Singer` FOREIGN KEY (`SingerId`) REFERENCES `mi_Singer` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
-CONSTRAINT `FK_mla_SingerAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
+`SingersId` int(10) unsigned NOT NULL,
+PRIMARY KEY (`AlbumId`,`SingersId`),
+KEY `FK_mla_Singers` (`SingersId`),
+CONSTRAINT `FK_mla_Singers` FOREIGN KEY (`SingersId`) REFERENCES `mi_Singers` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `FK_mla_SingersAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Songs` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
-Drop Table if EXISTS `mla_Song`;
-CREATE TABLE `mla_Song` (
+Drop Table if EXISTS `mla_Songs`;
+CREATE TABLE `mla_Songs` (
 `AlbumId` int(10) unsigned NOT NULL,
-`SongId` int(10) unsigned NOT NULL,
-PRIMARY KEY (`AlbumId`,`SongId`),
-KEY `FK_mla_Song` (`SongId`),
-CONSTRAINT `FK_mla_Song` FOREIGN KEY (`SongId`) REFERENCES `mi_Song` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
-CONSTRAINT `FK_mla_SongAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
+`SongsId` int(10) unsigned NOT NULL,
+PRIMARY KEY (`AlbumId`,`SongsId`),
+KEY `FK_mla_Songs` (`SongsId`),
+CONSTRAINT `FK_mla_Songs` FOREIGN KEY (`SongsId`) REFERENCES `mi_Songs` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT `FK_mla_SongsAlbumId` FOREIGN KEY (`AlbumId`) REFERENCES `mi_Album` (`Id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
