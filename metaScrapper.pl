@@ -1,6 +1,5 @@
 package Dhwani::Scrapers;
 
-
 use strict;
 use warnings;
 use Data::Dumper;
@@ -9,81 +8,78 @@ use LWP::Simple;
 use Hash::Merge qw(merge);
 use Smart::Comments;
 
-
 use mi_album;
 use db_loader_meta;
 
+my $param = shift;
+my $mode  = shift;
 
+my $pages;
 
-#my @all = ("2007,98","2006,100");
-#my @all = ("2005,100","2004,100");
-# my @all = ("2003,100","2001,100");
- my @all = ("2002,80 ","2000,80");
+if ( $mode eq "album" ) {
+    my $albumUrl = $param;
+    my $hData    = Dhwani::Scrapers::Google::getAlbumMetaData("$albumUrl");
+    Dhwani::DB::mi_insert($hData);
+    exit;
+}
+else {
+    my $pages = getPages($param);
 
-# my @all = ("2005,100","2004,100");
-# my @all = ("2005,100","2004,100");
+    foreach my $page (@$pages) {
+        print "Fetching Page $page. \n";
+        my $albums = getAlbums($page);
 
-
-foreach my $getParams (@all) {
-    my ($year,$maxCount) = split (/,/, $getParams);
-    my $pages = getPages($year, $maxCount);
-    
-    foreach my $page (@$pages){
-	print "Fetching Page $page. \n";
-	my $albums = getAlbums($page);
-	foreach my $albumUrl (@$albums){ ### Progress: 0...  100
-	my $hData = Dhwani::Scrapers::Google::getAlbumMetaData("$albumUrl");
-	#print Dumper($hData);
-	Dhwani::DB::mi_insert($hData);
-	#my $wait = <>;
-	}
+        foreach my $albumUrl (@$albums) {
+            next if ( Dhwani::DB::albumExits($albumUrl) );
+            my $hData = Dhwani::Scrapers::Google::getAlbumMetaData("$albumUrl");
+            Dhwani::DB::mi_insert($hData);
+        }
     }
 }
-#print Dumper($hData);
 
+# parse search query into different pages
+sub getPages
+{
 
+    my $search      = shift;
+    my $originalUrl = "http://www.google.co.in/music/search?q=$search&source=all&view=grid&sort=relevance&start=SUB";
+    my $aReturn     = ();
 
+    for ( my $count = 0 ; $count <= 2000 ; $count = $count + 20 ) {
+        my $url = $originalUrl;
+        $url =~ s/SUB/$count/;
+        my $purl = get($url);
 
-
-
-sub getPages {
-
-    my $year = shift;
-    my $maxCount = shift;
-    my $originalUrl = "http://www.google.co.in/music/search?q=$year&source=all&view=grid&sort=relevance&start=SUB";
-
-    my $aReturn = ();
-    for (my $count = 0; $count <= $maxCount; $count = $count + 20) {
-	my $url = $originalUrl;
-	$url =~ s/SUB/$count/;
-	push @$aReturn, $url;
+        if ( $purl =~ m/did not match any documents/i ) {
+            $count = 2000;
+        }
+        else {
+            push @$aReturn, $url;
+        }
     }
-
     return $aReturn;
-
 }
 
-sub getAlbums {
+# parse each page to get album listing
+sub getAlbums
+{
     my $url = shift;
     my @aReturn;
- 
 
     print "Fetching Data for $url\n";
-    $url = get($url);    
+    $url = get($url);
     my $dom_tree = new HTML::DOM;
     $dom_tree->write($url);
     $dom_tree->close;
 
-
     my @albums = $dom_tree->getElementsByClassName("result-title");
 
-    foreach my $album (@albums){
-	my ($albumLink) = $album->getElementsByTagName('a');
-	$albumLink = "http://www.google.co.in".$albumLink->getAttribute('href');
-	push @aReturn, $albumLink;
+    foreach my $album (@albums) {
+        my ($albumLink) = $album->getElementsByTagName('a');
+        $albumLink = "http://www.google.co.in" . $albumLink->getAttribute('href');
+        push @aReturn, $albumLink;
     }
-    
+
     return \@aReturn;
 }
-
 
