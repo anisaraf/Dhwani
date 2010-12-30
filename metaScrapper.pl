@@ -11,8 +11,8 @@ use Smart::Comments;
 use mi_album;
 use db_loader_meta;
 
-my $param = shift;
-my $mode  = shift;
+my $param = shift || die "Please provide search term";
+my $mode  = shift || "";
 
 my $pages;
 
