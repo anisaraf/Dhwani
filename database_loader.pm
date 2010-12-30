@@ -12,7 +12,6 @@ use utilities;
 
 my $dbh = Dhwani::Utilities::getDBHandle();
 
-
 sub getRaterId($)
 {
     my $name = shift;

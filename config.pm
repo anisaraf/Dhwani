@@ -7,17 +7,16 @@ use Data::Dumper;
 
 sub get
 {
-     my $xmlConfig = loadConfig(
-	 "config.txt");
-     
-     my $conf = {
-	 database => {
-	     dsn => $xmlConfig->{databaseConnection}->{dsn},
-	     user   => $xmlConfig->{databaseConnection}->{user},
-	     pass   => $xmlConfig->{databaseConnection}->{pass},
-	 }};
-     
-     return $conf;
+    my $xmlConfig = loadConfig("config.txt");
+
+    my $conf = {
+                database => {
+                             dsn  => $xmlConfig->{databaseConnection}->{dsn},
+                             user => $xmlConfig->{databaseConnection}->{user},
+                             pass => $xmlConfig->{databaseConnection}->{pass},
+                            }};
+
+    return $conf;
 }
 
 sub loadConfig

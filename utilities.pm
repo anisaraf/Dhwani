@@ -13,7 +13,7 @@ use config;
 sub getDBHandle
 {
 
-    my $conf = Dhwani::Config::get();
+    my $conf     = Dhwani::Config::get();
     my $dsn      = $conf->{database}->{dsn};
     my $user     = $conf->{database}->{user};
     my $password = $conf->{database}->{pass};
